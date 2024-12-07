@@ -1,0 +1,50 @@
+d1 $ s "[bd(1,8)]" # gain "1.2"
+
+d6 $ s "sn(3,8)"
+
+d2 $ s "industrial:1(7,8)" #gain 0.8 # room "1"
+
+d3 $ s "hh(9,16)" # gain "1.2" # pan "0.4"
+
+d4 $ n "<f'maj g'maj e'min a'min>"
+# sound "superpiano"
+# sustain 1.8
+# gain 0.8
+# room "0.6"
+
+d5 $ s "coins(7,16)"
+
+let visualTarget = Target
+      { oName = "processing"   -- ターゲットの名前
+      , oAddress = "localhost" -- localhostに送信
+      , oPort = 2020           -- Processingがリッスンしているポート番号
+      , oLatency = 10000         -- レイテンシ調整
+      , oSchedule = Pre MessageStamp      -- スケジューリング設定 おい！スペース空いてて良いんですね！？
+      , oWindow = Nothing
+      , oHandshake = False
+      , oBusPort = Nothing }
+
+let oscVisual = OSC "/visual" $ ArgList
+      [ ("s", Nothing)
+      , ("cycle", Just $ VF 0)
+      , ("sec", Just $ VF 0)
+      , ("usec", Just $ VF 0)
+      ]
+
+let oscmap = [(visualTarget, [oscVisual])]
+
+stream <- startStream defaultConfig oscmap
+
+streamReplace stream 1 $ s "testbb"
+
+d1 silence
+
+d2 silence
+
+d3 silence
+
+d4 silence
+
+d5 silence
+
+d6 silence
